@@ -43,13 +43,13 @@ class SamlSlo
         $this->setDestination();
         // We are receiving a Logout Request
         if (request()->filled('SAMLRequest')) {
-            $xml = gzinflate(base64_decode(request('SAMLRequest')));
+            $xml = base64_decode(request('SAMLRequest'));
             $deserializationContext = new DeserializationContext;
             $deserializationContext->getDocument()->loadXML($xml);
             // Get the final destination
             session()->put('RelayState', request('RelayState'));
         } elseif (request()->filled('SAMLResponse')) {
-            $xml = gzinflate(base64_decode(request('SAMLResponse')));
+            $xml = base64_decode(request('SAMLResponse'));
             $deserializationContext = new DeserializationContext;
             $deserializationContext->getDocument()->loadXML($xml);
         }
@@ -102,19 +102,18 @@ class SamlSlo
         $destination = $this->sp['logout'];
         $queryParams = $this->getQueryParams();
         if (!empty($queryParams)) {
-            if (!parse_url($destination, PHP_URL_QUERY)){
+            if (!parse_url($destination, PHP_URL_QUERY)) {
                 $destination = Str::finish(url($destination), '?') . Arr::query($queryParams);
-            }
-            else{
-                $destination .= '&'.Arr::query($queryParams);
+            } else {
+                $destination .= '&' . Arr::query($queryParams);
             }
         }
 
         $this->destination = $destination;
     }
- 
-   private function getQueryParams()
-   {
+
+    private function getQueryParams()
+    {
         $queryParams = (isset($this->sp['query_params']) ? $this->sp['query_params'] : null);
 
         if (is_null($queryParams)) {
@@ -124,5 +123,5 @@ class SamlSlo
         }
 
         return $queryParams;
-   }
+    }
 }

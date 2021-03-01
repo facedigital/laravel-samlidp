@@ -54,7 +54,7 @@ class SamlSso implements SamlContract
     public function handle()
     {
         $deserializationContext = new DeserializationContext;
-        $deserializationContext->getDocument()->loadXML(gzinflate(base64_decode(request('SAMLRequest'))));
+        $deserializationContext->getDocument()->loadXML(base64_decode(request('SAMLRequest')));
 
         $this->authn_request = new AuthnRequest;
         $this->authn_request->deserialize($deserializationContext->getDocument()->firstChild, $deserializationContext);
@@ -174,11 +174,10 @@ class SamlSso implements SamlContract
 
         $queryParams = $this->getQueryParams();
         if (!empty($queryParams)) {
-            if (!parse_url($destination, PHP_URL_QUERY)){
+            if (!parse_url($destination, PHP_URL_QUERY)) {
                 $destination = Str::finish(url($destination), '?') . Arr::query($queryParams);
-            }
-            else{
-                $destination .= '&'.Arr::query($queryParams);
+            } else {
+                $destination .= '&' . Arr::query($queryParams);
             }
         }
 
