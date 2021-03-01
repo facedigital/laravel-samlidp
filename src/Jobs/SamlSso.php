@@ -54,7 +54,14 @@ class SamlSso implements SamlContract
     public function handle()
     {
         $deserializationContext = new DeserializationContext;
-        $deserializationContext->getDocument()->loadXML(base64_decode(request('SAMLRequest')));
+
+        try {
+            $samlRequest = gzinflate(base64_decode(request('SAMLRequest')));
+        } catch (\Exception $e) {
+            $samlRequest = base64_decode(request('SAMLRequest'));
+        }
+
+        $deserializationContext->getDocument()->loadXML($samlRequest);
 
         $this->authn_request = new AuthnRequest;
         $this->authn_request->deserialize($deserializationContext->getDocument()->firstChild, $deserializationContext);
